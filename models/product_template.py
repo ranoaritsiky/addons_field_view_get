@@ -21,14 +21,18 @@ class Product_template(models.Model):
             doc = etree.XML(res['arch'])
             # here we are trying to add a field next to company_id
             company_id = doc.xpath("//field[@name='company_id']")
-            size_box = etree.Element('field',name='size_box',string='Size of the box')
-            company_id[0].addnext(size_box)
+            if company_id:
+                size_box = etree.Element('field',name='size_box',string='Size of the box')
+                if size_box:
+                    company_id[0].addnext(size_box)
+                    
+                    # Serialize the modified XML definition and return it
+                    res['arch'] = etree.tostring(doc)
+                    
+                    # Update the view's fields definition to include the new field
+                    fields_def = res['fields']
+                    fields_def['new_field'] = {'string': 'New Field', 'type': 'char'}
+                    res['fields'] = fields_def
             
-            # Serialize the modified XML definition and return it
-            res['arch'] = etree.tostring(doc)
             
-            # Update the view's fields definition to include the new field
-            fields_def = res['fields']
-            fields_def['new_field'] = {'string': 'New Field', 'type': 'char'}
-            res['fields'] = fields_def
         return res
