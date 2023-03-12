@@ -28,6 +28,15 @@ class Product_template(models.Model):
                 
                 # Serialize the modified XML definition and return it
                 res['arch'] = etree.tostring(doc)
+            
+            """
+                how to remove a field from a view
+            """
+            barcode = doc.xpath("//field[@name='barcode']")
+            if barcode:
+                for node in barcode:
+                    node.getparent().remove(node)
+                res['arch'] = etree.tostring(doc)
                 
             
             
